@@ -13,6 +13,6 @@ export async function createInitialData() {
       password: password,
     });
   } catch (err) {
-      console.error(err);
+    console.error(err);
   }
 }
