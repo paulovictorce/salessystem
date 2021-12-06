@@ -11,7 +11,10 @@ public class ProductRequest {
   private String name;
   private Integer categoryId;
   private Integer supplierId;
+
+  @JsonProperty("quantity_available")
   private Integer quantityAvailable;
+
   @JsonProperty("created_at")
   @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
   private LocalDateTime createdAt;

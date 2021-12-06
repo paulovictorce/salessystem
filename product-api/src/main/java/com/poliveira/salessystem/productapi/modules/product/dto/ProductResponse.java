@@ -22,6 +22,8 @@ public class ProductResponse {
   private String name;
   private CategoryResponse category;
   private SupplierResponse supplier;
+
+  @JsonProperty("quantity_available")
   private Integer quantityAvailable;
 
   @JsonProperty("created_at")
