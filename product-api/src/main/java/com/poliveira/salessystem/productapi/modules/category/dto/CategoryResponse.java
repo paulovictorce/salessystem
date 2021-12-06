@@ -1,6 +1,6 @@
-package com.poliveira.salessystem.productapi.modules.product.dto;
+package com.poliveira.salessystem.productapi.modules.category.dto;
 
-import com.poliveira.salessystem.productapi.modules.product.model.Category;
+import com.poliveira.salessystem.productapi.modules.category.model.Category;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

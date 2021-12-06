@@ -1,8 +1,8 @@
-package com.poliveira.salessystem.productapi.modules.product.controller;
+package com.poliveira.salessystem.productapi.modules.category.controller;
 
-import com.poliveira.salessystem.productapi.modules.product.dto.CategoryRequest;
-import com.poliveira.salessystem.productapi.modules.product.dto.CategoryResponse;
-import com.poliveira.salessystem.productapi.modules.product.service.CategoryService;
+import com.poliveira.salessystem.productapi.modules.category.dto.CategoryRequest;
+import com.poliveira.salessystem.productapi.modules.category.dto.CategoryResponse;
+import com.poliveira.salessystem.productapi.modules.category.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

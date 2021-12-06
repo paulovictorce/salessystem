@@ -1,7 +1,6 @@
-package com.poliveira.salessystem.productapi.modules.product.model;
+package com.poliveira.salessystem.productapi.modules.category.model;
 
-import com.poliveira.salessystem.productapi.modules.product.dto.CategoryRequest;
-import com.poliveira.salessystem.productapi.modules.product.dto.CategoryResponse;
+import com.poliveira.salessystem.productapi.modules.category.dto.CategoryRequest;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

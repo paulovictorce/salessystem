@@ -1,4 +1,4 @@
-package com.poliveira.salessystem.productapi.modules.product.dto;
+package com.poliveira.salessystem.productapi.modules.category.dto;
 
 import lombok.Data;
 
