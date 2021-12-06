@@ -41,7 +41,7 @@ public class CategoryService {
     if (isEmpty(description)) {
       throw new ValidationException("The category description must be informed.");
     }
-    return categoryRepository.findByDescription(description).stream().map(CategoryResponse::of)
+    return categoryRepository.findByDescriptionIgnoreCaseContaining(description).stream().map(CategoryResponse::of)
         .collect(
             Collectors.toList());
   }
