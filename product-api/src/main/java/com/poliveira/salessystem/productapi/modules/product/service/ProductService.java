@@ -4,6 +4,7 @@ package com.poliveira.salessystem.productapi.modules.product.service;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import com.poliveira.salessystem.productapi.config.exception.ValidationException;
+import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.category.service.CategoryService;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
@@ -81,6 +82,32 @@ public class ProductService {
     return ProductResponse.of((product));
   }
 
+  public ProductResponse update(ProductRequest request, Integer id) {
+    validateProductDataInformed(request);
+    validateCategoryAndSupplierInformed(request);
+    validateInformedId(id);
+    var category = categoryService.findById(request.getCategoryId());
+    var supplier = supplierService.findById(request.getSupplierId());
+    var product = Product.of(request, category, supplier);
+    product.setId(id);
+    productRepository.save(product);
+    return ProductResponse.of((product));
+  }
+
+  public SuccessResponse delete(Integer id) {
+    validateInformedId(id);
+    productRepository.deleteById(id);
+    return SuccessResponse.create("The product was deleted.");
+  }
+
+  public Boolean existsByCategoryId(Integer id) {
+    return productRepository.existsByCategoryId(id);
+  }
+
+  public Boolean existsBySupplierId(Integer id) {
+    return productRepository.existsBySupplierId(id);
+  }
+
   private void validateProductDataInformed(ProductRequest request) {
     if (isEmpty(request.getName())) {
       throw new ValidationException("The product's name was not informed.");
@@ -102,6 +129,12 @@ public class ProductService {
 
     if (isEmpty(request.getSupplierId())) {
       throw new ValidationException("The supplier id was not informed.");
+    }
+  }
+
+  private void validateInformedId(Integer id) {
+    if (isEmpty(id)) {
+      throw new ValidationException("The category id was not informed.");
     }
   }
 

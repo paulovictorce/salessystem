@@ -1,13 +1,16 @@
 package com.poliveira.salessystem.productapi.modules.product.controller;
 
+import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
 import com.poliveira.salessystem.productapi.modules.product.service.ProductService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +50,15 @@ public class ProductController {
   @PostMapping
   public ProductResponse save(@RequestBody ProductRequest request) {
     return productService.save(request);
+  }
+
+  @PutMapping("{id}")
+  public ProductResponse update(@RequestBody ProductRequest request, @PathVariable Integer id) {
+    return productService.update(request, id);
+  }
+
+  @DeleteMapping("{id}")
+  public SuccessResponse delete(@PathVariable Integer id) {
+    return productService.delete(id);
   }
 }
