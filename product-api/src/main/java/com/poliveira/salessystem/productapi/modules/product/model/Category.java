@@ -1,5 +1,7 @@
 package com.poliveira.salessystem.productapi.modules.product.model;
 
+import com.poliveira.salessystem.productapi.modules.product.dto.CategoryRequest;
+import com.poliveira.salessystem.productapi.modules.product.dto.CategoryResponse;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +27,10 @@ public class Category {
 
   @Column(name = "DESCRIPTION", nullable = false)
   private String description;
+
+  public static Category of(CategoryRequest request) {
+    var category = new Category();
+    BeanUtils.copyProperties(request, category);
+    return category;
+  }
 }
