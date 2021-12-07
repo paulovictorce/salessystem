@@ -10,9 +10,6 @@ import com.poliveira.salessystem.productapi.modules.category.dto.CategoryRespons
 import com.poliveira.salessystem.productapi.modules.category.model.Category;
 import com.poliveira.salessystem.productapi.modules.category.repository.CategoryRepository;
 import com.poliveira.salessystem.productapi.modules.product.service.ProductService;
-import com.poliveira.salessystem.productapi.modules.supplier.dto.SupplierRequest;
-import com.poliveira.salessystem.productapi.modules.supplier.dto.SupplierResponse;
-import com.poliveira.salessystem.productapi.modules.supplier.model.Supplier;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
