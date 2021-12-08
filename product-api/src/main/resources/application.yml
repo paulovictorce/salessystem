@@ -33,6 +33,8 @@ spring:
     password: ${RABBIT_MQ_PASSWORD:guest}
 
 app-config:
+  services:
+    sales: http://${SALES_HOST:localhost}:{SALES_PORT:8082}
   secrets:
     api-secret: ${API_SECRET:YXV0aC1hcGktYXBwLXNhbGVzLXN5c3RlbS1qYXZhc2NyaXB0LW5vZGVqcy1qYXZhLXJhYmJpdG1x}
   rabbit:

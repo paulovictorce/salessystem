@@ -3,6 +3,7 @@ package com.poliveira.salessystem.productapi.modules.product.controller;
 import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductSalesResponse;
 import com.poliveira.salessystem.productapi.modules.product.service.ProductService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,10 @@ public class ProductController {
   @DeleteMapping("{id}")
   public SuccessResponse delete(@PathVariable Integer id) {
     return productService.delete(id);
+  }
+
+  @GetMapping("{id}/sales")
+  public ProductSalesResponse findProductsSales(@PathVariable Integer id) {
+    return productService.findSales(id);
   }
 }

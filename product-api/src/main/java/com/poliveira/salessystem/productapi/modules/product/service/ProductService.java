@@ -8,9 +8,11 @@ import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.category.service.CategoryService;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductSalesResponse;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductStockDTO;
 import com.poliveira.salessystem.productapi.modules.product.model.Product;
 import com.poliveira.salessystem.productapi.modules.product.repository.ProductRepository;
+import com.poliveira.salessystem.productapi.modules.sales.client.SalesClient;
 import com.poliveira.salessystem.productapi.modules.sales.dto.SalesConfirmationDTO;
 import com.poliveira.salessystem.productapi.modules.sales.enums.SalesStatus;
 import com.poliveira.salessystem.productapi.modules.sales.rabbit.SalesConfirmationSender;
@@ -39,6 +41,9 @@ public class ProductService {
 
   @Autowired
   SalesConfirmationSender salesConfirmationSender;
+
+  @Autowired
+  SalesClient salesClient;
 
   public ProductResponse findByIdResponse(Integer id) {
     if (isEmpty(id)) {
@@ -183,7 +188,8 @@ public class ProductService {
     });
     if (!isEmpty(productsForUpdate)) {
       productRepository.saveAll(productsForUpdate);
-      var approvedMessage = new SalesConfirmationDTO(productStockDTO.getSalesId(), SalesStatus.APPROVED);
+      var approvedMessage = new SalesConfirmationDTO(productStockDTO.getSalesId(),
+          SalesStatus.APPROVED);
       salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
     }
   }
@@ -203,6 +209,17 @@ public class ProductService {
         throw new ValidationException("The product ID and the quantity must be informed.");
       }
     });
+  }
+
+  public ProductSalesResponse findSales(Integer id) {
+    var product = findById(id);
+    try {
+      var sales = salesClient.findSalesByProductId(id)
+          .orElseThrow(() -> new ValidationException("Sales was not found by this product."));
+      return ProductSalesResponse.of(product, sales.getSalesIds());
+    } catch (Exception ex) {
+      throw new ValidationException("There was an error when trying to get the product sales.");
+    }
   }
 
 }
