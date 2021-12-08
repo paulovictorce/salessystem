@@ -6,6 +6,8 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 import com.poliveira.salessystem.productapi.config.exception.ValidationException;
 import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.category.service.CategoryService;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductCheckStockRequest;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductQuantityDTO;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductSalesResponse;
@@ -219,6 +221,24 @@ public class ProductService {
       return ProductSalesResponse.of(product, sales.getSalesIds());
     } catch (Exception ex) {
       throw new ValidationException("There was an error when trying to get the product sales.");
+    }
+  }
+
+  public SuccessResponse checkProductsStock(ProductCheckStockRequest request) {
+    if (isEmpty(request) || isEmpty(request.getProducts())) {
+      throw new ValidationException("The request data and products must be informed.");
+    }
+    request.getProducts().forEach(this::validateStock);
+    return SuccessResponse.create("The stock is ok.");
+  }
+
+  private void validateStock(ProductQuantityDTO productQuantity) {
+    if (isEmpty(productQuantity.getProductId()) || isEmpty(productQuantity.getQuantity())) {
+      throw new ValidationException("Product id and quantity must be informed");
+    }
+    var product = findById(productQuantity.getProductId());
+    if(productQuantity.getQuantity() > product.getQuantityAvailable()) {
+      throw new ValidationException(String.format("The product %s is out of stock.", product.getId()));
     }
   }
 

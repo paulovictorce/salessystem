@@ -1,6 +1,7 @@
 package com.poliveira.salessystem.productapi.modules.product.controller;
 
 import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductCheckStockRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductSalesResponse;
@@ -61,6 +62,11 @@ public class ProductController {
   @DeleteMapping("{id}")
   public SuccessResponse delete(@PathVariable Integer id) {
     return productService.delete(id);
+  }
+
+  @PostMapping("check-stock")
+  public SuccessResponse checkProductStock(ProductCheckStockRequest request) {
+    return productService.checkProductsStock(request);
   }
 
   @GetMapping("{id}/sales")
