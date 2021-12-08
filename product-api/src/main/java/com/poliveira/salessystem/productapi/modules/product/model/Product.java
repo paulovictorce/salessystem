@@ -57,4 +57,8 @@ public class Product {
     return Product.builder().name(request.getName()).quantityAvailable(
         request.getQuantityAvailable()).category(category).supplier(supplier).build();
   }
+
+  public void updateStock(Integer quantity) {
+    quantityAvailable -= quantity;
+  }
 }

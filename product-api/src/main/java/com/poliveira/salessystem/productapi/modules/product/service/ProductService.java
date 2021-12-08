@@ -8,15 +8,23 @@ import com.poliveira.salessystem.productapi.config.response.SuccessResponse;
 import com.poliveira.salessystem.productapi.modules.category.service.CategoryService;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductRequest;
 import com.poliveira.salessystem.productapi.modules.product.dto.ProductResponse;
+import com.poliveira.salessystem.productapi.modules.product.dto.ProductStockDTO;
 import com.poliveira.salessystem.productapi.modules.product.model.Product;
 import com.poliveira.salessystem.productapi.modules.product.repository.ProductRepository;
+import com.poliveira.salessystem.productapi.modules.sales.dto.SalesConfirmationDTO;
+import com.poliveira.salessystem.productapi.modules.sales.enums.SalesStatus;
+import com.poliveira.salessystem.productapi.modules.sales.rabbit.SalesConfirmationSender;
 import com.poliveira.salessystem.productapi.modules.supplier.service.SupplierService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class ProductService {
 
   private static final Integer ZERO = 0;
@@ -28,6 +36,9 @@ public class ProductService {
 
   @Autowired
   private CategoryService categoryService;
+
+  @Autowired
+  SalesConfirmationSender salesConfirmationSender;
 
   public ProductResponse findByIdResponse(Integer id) {
     if (isEmpty(id)) {
@@ -71,6 +82,13 @@ public class ProductService {
         .map(ProductResponse::of)
         .collect(
             Collectors.toList());
+  }
+
+  public Product findById(Integer id) {
+    validateInformedId(id);
+    return productRepository
+        .findById(id)
+        .orElseThrow(() -> new ValidationException("There's no product for the given ID."));
   }
 
   public ProductResponse save(ProductRequest request) {
@@ -138,5 +156,53 @@ public class ProductService {
     }
   }
 
+  public void updateProductStock(ProductStockDTO productStockDTO) {
+    try {
+      validateStockUpdateData(productStockDTO);
+      updateStock(productStockDTO);
+    } catch (Exception ex) {
+      log.error("Error while trying to update stock for message with error: {}", ex.getMessage(),
+          ex);
+      salesConfirmationSender.sendSalesConfirmationMessage(new SalesConfirmationDTO(
+          productStockDTO.getSalesId(), SalesStatus.REJECTED));
+
+    }
+  }
+
+  private void updateStock(ProductStockDTO productStockDTO) {
+    var productsForUpdate = new ArrayList<Product>();
+
+    productStockDTO.getProducts().forEach(salesProduct -> {
+      var existingProducts = findById(salesProduct.getProductId());
+      if (salesProduct.getQuantity() > existingProducts.getQuantityAvailable()) {
+        throw new ValidationException(
+            String.format("The product %s is out of stock.", existingProducts.getId()));
+      }
+      existingProducts.updateStock(salesProduct.getQuantity());
+      productsForUpdate.add(existingProducts);
+    });
+    if (!isEmpty(productsForUpdate)) {
+      productRepository.saveAll(productsForUpdate);
+      var approvedMessage = new SalesConfirmationDTO(productStockDTO.getSalesId(), SalesStatus.APPROVED);
+      salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+    }
+  }
+
+  @Transactional
+  private void validateStockUpdateData(ProductStockDTO product) {
+    if (isEmpty(product) || isEmpty(product.getSalesId())) {
+      throw new ValidationException("The product data and the sales ID must be informed.");
+    }
+
+    if (isEmpty(product.getProducts())) {
+      throw new ValidationException("The sales products must be informed.");
+    }
+
+    product.getProducts().forEach(salesProduct -> {
+      if (isEmpty(salesProduct.getProductId()) || isEmpty(salesProduct.getQuantity())) {
+        throw new ValidationException("The product ID and the quantity must be informed.");
+      }
+    });
+  }
 
 }
