@@ -65,7 +65,7 @@ public class ProductController {
   }
 
   @PostMapping("check-stock")
-  public SuccessResponse checkProductStock(ProductCheckStockRequest request) {
+  public SuccessResponse checkProductStock(@RequestBody ProductCheckStockRequest request) {
     return productService.checkProductsStock(request);
   }
 
